@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>单词小英雄 · Word Hero</title>
+  <link rel="stylesheet" href="word-hero.css">
+</head>
+<body>
+  <!-- ========== 顶部标题栏 ========== -->
+  <header class="app-header">
+    <h1>🦸 单词小英雄</h1>
+    <span class="header-stars" id="headerStars">⭐ 0</span>
+  </header>
+
+  <!-- ========== 屏幕容器 ========== -->
+  <main class="screen-container">
+
+    <!-- 🏠 屏幕 1：首页 -->
+    <section class="screen active" id="screenHome">
+      <div class="home-pet-area">
+        <div class="pet-display" id="petDisplay">🥚</div>
+        <div class="pet-name" id="petName">蛋宝宝</div>
+        <div class="progress-bar-container">
+          <div class="progress-bar" id="petProgressBar" style="width: 0%"></div>
+        </div>
+        <div class="progress-label" id="petProgressLabel">0 / 50 ⭐</div>
+      </div>
+
+      <div class="home-stats">
+        <div class="stat-card">
+          <div class="stat-icon">🔥</div>
+          <div class="stat-value" id="homeStreak">0</div>
+          <div class="stat-label">连续打卡</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">✅</div>
+          <div class="stat-value" id="homeMastered">0</div>
+          <div class="stat-label">已掌握</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">📚</div>
+          <div class="stat-value" id="homeTotal">0</div>
+          <div class="stat-label">总词数</div>
+        </div>
+      </div>
+
+      <div class="today-task-card" id="todayTaskCard">
+        <div class="task-card-header">📅 今日任务</div>
+        <div class="task-card-body">
+          <div class="task-row"><span>🆕 新词：</span><strong id="taskNewCount">0</strong> 个</div>
+          <div class="task-row"><span>🔁 复习：</span><strong id="taskReviewCount">0</strong> 个</div>
+        </div>
+        <button class="btn btn-primary btn-large" id="btnStartLearning" onclick="switchScreen('practice')">
+          开始学习 →
+        </button>
+      </div>
+
+      <div class="error-reminder" id="errorReminder" style="display:none">
+        <div class="error-reminder-title">⚠️ 易错词提醒</div>
+        <div class="error-reminder-list" id="errorReminderList"></div>
+      </div>
+    </section>
+
+    <!-- 📚 屏幕 2：词库 -->
+    <section class="screen" id="screenWordBank">
+      <div class="wordbank-toolbar">
+        <input type="text" class="search-input" id="searchInput" placeholder="🔍 搜索单词..." oninput="renderWordBank()">
+        <div class="toolbar-buttons">
+          <button class="btn btn-sm" onclick="showAddWordDialog()">+ 添加</button>
+          <button class="btn btn-sm" onclick="importWords()">📥 导入</button>
+          <button class="btn btn-sm" onclick="exportWords()">📤 导出</button>
+        </div>
+      </div>
+      <div class="wordbank-list" id="wordBankList">
+        <!-- 动态渲染 -->
+      </div>
+    </section>
+
+    <!-- ✏️ 屏幕 3：练习 -->
+    <section class="screen" id="screenPractice">
+      <div class="practice-progress">
+        <div class="practice-progress-label">今日进度：<span id="practiceProgressText">0 / 0</span></div>
+        <div class="progress-bar-container">
+          <div class="progress-bar practice-bar" id="practiceProgressBar" style="width: 0%"></div>
+        </div>
+      </div>
+
+      <div class="practice-card" id="practiceCard">
+        <div class="practice-type-label" id="practiceTypeLabel">🎯 看中文拼英文</div>
+        <div class="practice-image-area" id="practiceImageArea">
+          <img id="practiceImage" src="" alt="" style="display:none">
+        </div>
+        <div class="practice-prompt" id="practicePrompt">加载中...</div>
+        <div class="practice-input-row">
+          <input type="text" class="practice-input" id="practiceInput" placeholder="在这里输入英文..." autocomplete="off" autocapitalize="off" spellcheck="false">
+        </div>
+        <div class="practice-options" id="practiceOptions" style="display:none">
+          <!-- 选择题选项按钮 -->
+        </div>
+        <div class="practice-buttons">
+          <button class="btn btn-speak" id="btnSpeak" onclick="speakCurrentWord()">🔊</button>
+          <button class="btn btn-primary" id="btnSubmit" onclick="submitAnswer()">确认 ✓</button>
+          <button class="btn btn-primary" id="btnContinue" onclick="continueAfterError()" style="display:none;background:#E17055;">✍️ 我记住了，继续</button>
+        </div>
+        <div class="practice-feedback" id="practiceFeedback"></div>
+      </div>
+    </section>
+
+    <!-- 🏆 屏幕 4：成就 -->
+    <section class="screen" id="screenAchievements">
+      <div class="achievement-evolution">
+        <h3>🐣 成长之路</h3>
+        <div class="evolution-track" id="evolutionTrack">
+          <span class="evo-stage" data-level="0">🥚</span>
+          <span class="evo-arrow">→</span>
+          <span class="evo-stage" data-level="1">🐣</span>
+          <span class="evo-arrow">→</span>
+          <span class="evo-stage" data-level="2">🐰</span>
+          <span class="evo-arrow">→</span>
+          <span class="evo-stage" data-level="3">🦊</span>
+          <span class="evo-arrow">→</span>
+          <span class="evo-stage" data-level="4">🦁</span>
+          <span class="evo-arrow">→</span>
+          <span class="evo-stage" data-level="5">🐉</span>
+        </div>
+      </div>
+
+      <div class="achievement-section">
+        <h3>📊 易错单词 TOP 5</h3>
+        <div class="error-top-list" id="errorTopList">
+          <div class="empty-hint">暂无数据，开始练习吧！</div>
+        </div>
+      </div>
+
+      <div class="achievement-section">
+        <h3>📅 打卡日历</h3>
+        <div class="calendar" id="calendarArea">
+          <!-- 月视图日历 -->
+        </div>
+      </div>
+
+      <div class="achievement-section">
+        <h3>🏅 成就徽章</h3>
+        <div class="badge-grid" id="badgeGrid">
+          <!-- 徽章动态渲染 -->
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ========== 底部导航栏 ========== -->
+  <nav class="bottom-nav">
+    <button class="nav-btn active" data-screen="home" onclick="switchScreen('home')">
+      <span class="nav-icon">🏠</span>
+      <span class="nav-label">首页</span>
+    </button>
+    <button class="nav-btn" data-screen="wordBank" onclick="switchScreen('wordBank')">
+      <span class="nav-icon">📚</span>
+      <span class="nav-label">词库</span>
+    </button>
+    <button class="nav-btn" data-screen="practice" onclick="switchScreen('practice')">
+      <span class="nav-icon">✏️</span>
+      <span class="nav-label">练习</span>
+    </button>
+    <button class="nav-btn" data-screen="achievements" onclick="switchScreen('achievements')">
+      <span class="nav-icon">🏆</span>
+      <span class="nav-label">成就</span>
+    </button>
+  </nav>
+
+  <!-- ========== 弹窗容器（添加/编辑单词） ========== -->
+  <div class="modal-overlay" id="modalOverlay" style="display:none" onclick="closeModal()">
+    <div class="modal-content" onclick="event.stopPropagation()">
+      <h3 id="modalTitle">添加单词</h3>
+      <div class="modal-body">
+        <label>单元</label>
+        <select id="modalUnit">
+          <option value="u1">U1</option>
+          <option value="u2">U2</option>
+          <option value="u3">U3</option>
+          <option value="u4">U4</option>
+          <option value="u5">U5</option>
+          <option value="u6">U6</option>
+        </select>
+        <label>英文</label>
+        <input type="text" id="modalEnglish" placeholder="如：bread">
+        <label>中文</label>
+        <input type="text" id="modalChinese" placeholder="如：面包">
+        <label>图片路径</label>
+        <input type="text" id="modalImage" placeholder="如：images/u1-bread.png">
+        <label>音标（可选）</label>
+        <input type="text" id="modalPhonetic" placeholder="如：/brɛd/">
+      </div>
+      <div class="modal-footer">
+        <button class="btn" onclick="closeModal()">取消</button>
+        <button class="btn btn-primary" id="btnSaveWord" onclick="saveWord()">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== 成功反馈动画层 ========== -->
+  <div class="feedback-layer" id="feedbackLayer"></div>
+
+  <script src="word-hero.js"></script>
+</body>
+</html>
